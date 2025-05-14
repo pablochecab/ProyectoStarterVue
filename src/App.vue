@@ -1,8 +1,9 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 
-import Toast from 'primevue/toast';
+import HomeView from './views/HomeView.vue';
 
+import Toast from 'primevue/toast';
 
 // const myHeaders = new Headers();
 // myHeaders.append("Content-Type", "application/json");
@@ -28,18 +29,6 @@ import Toast from 'primevue/toast';
 </script> 
 
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-      </nav>
-    </div>
-  </header>
-  <Toast />
-
-
-
   <RouterView />
 </template>
 
