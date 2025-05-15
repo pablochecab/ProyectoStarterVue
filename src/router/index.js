@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
 import LoginGuay from '../views/LoginGuay.vue'
 
 const router = createRouter({
@@ -14,11 +13,6 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
-    },
-    {
-      path: '/loginGuay',
-      name: 'loginGuay',
       component: LoginGuay,
     },
   ],

@@ -4,17 +4,21 @@ import { useToast } from 'primevue/usetoast';
 import { z } from 'zod';
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 
-const toast = useToast();
+// El @ siempre empieza desde la raiz 'src'
+import { useRouter } from 'vue-router';
+import { login } from '@/services/AuthService';
 
+const router = useRouter();
+const toast = useToast();
 const initialValues = ref({
-    username: '',
-    password: ''
+    usuario: '',
+    contrasenia: ''
 });
 
 const resolver = zodResolver(
     z.object({
-        username: z.string().min(2, { message: 'Este campo es obligatorio.' }),
-        password: z
+        usuario: z.string().min(2, { message: 'Este campo es obligatorio.' }),
+        contrasenia: z
             .string()
             .min(4, { message: 'Minimum 4 characters.' })
         // .max(8, { message: 'Maximum 8 characters.' })
@@ -30,21 +34,28 @@ const resolver = zodResolver(
     })
 );
 
-const onFormSubmit = (e) => {
+const onFormSubmit = async (e) => {
 
     // e.originalEvent: Represents the native form submit event.
     // e.valid: A boolean that indicates whether the form is valid or not.
     // e.states: Contains the current state of each form field, including validity status.
     // e.errors: An object that holds any validation errors for the invalid fields in the form.
     // e.values: An object containing the current values of all form fields.
-    // e.reset: A function that resets the form to its initial state.
+    // e.reset: A function that resets the form to its initial state.  
 
     if (e.valid) {
-        toast.add({ severity: 'success', summary: '¡Sesion iniciada!', life: 3000 });
-        console.log(e.values);
+        const { usuario, contrasenia } = e.values;
+        const result = await login(usuario, contrasenia);
+
+        if (result.ok) {
+            toast.add({ severity: 'success', summary: '¡Sesión iniciada!', detail: `Bienvenido, ${result.data.usuario}`, life: 3000 });
+            localStorage.setItem('token', result.data.token);
+            router.push('/');
+        } else {
+            toast.add({ severity: 'error', summary: 'Error', detail: result.data?.message || result.error, life: 3000 });
+        }
     }
 };
-
 </script>
 
 <template>
@@ -73,7 +84,7 @@ const onFormSubmit = (e) => {
                             </g>
                         </svg>
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to
-                            PrimeLand!</div>
+                            FlexOrder!</div>
                         <span class="text-muted-color font-medium">Sign in to continue</span>
                     </div>
 
@@ -81,24 +92,22 @@ const onFormSubmit = (e) => {
                     <Form style="width: 100%;" v-slot="$form" :initialValues :resolver @submit="onFormSubmit"
                         class="flex flex-col gap-4 w-full sm:w-60">
                         <div class="flex flex-col gap-1">
-                            <InputText name="username" type="text" placeholder="Username" fluid />
-                            <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
-                                $form.username.error.message }}</Message>
+                            <InputText name="usuario" type="text" placeholder="Usuario" fluid />
+                            <Message v-if="$form.usuario?.invalid" severity="error" size="small" variant="simple">{{
+                                $form.usuario.error.message }}</Message>
                         </div>
                         <div class="flex flex-col gap-1">
-                            <Password name="password" placeholder="Password" :feedback="false" toggleMask fluid />
-                            <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
-                                {{ $form.password.error.message }}
+                            <Password name="contrasenia" placeholder="Contraseña" :feedback="false" toggleMask fluid />
+                            <Message v-if="$form.contrasenia?.invalid" severity="error" size="small" variant="simple">
+                                {{ $form.contrasenia.error.message }}
                             </Message>
                         </div>
-                        <Button class="p-1!" type="submit" severity="sucess" label="ACEPTAR">
-                            <RouterLink to="/">Sign In</RouterLink>
-                        </Button>
+                        <Button class="p-1!" type="submit" severity="success" label="ACEPTAR" />
                     </Form>
                     <div class="text-center p-1">
                         <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Don't
                             have an account yet? <RouterLink class="text-green-500 hover:text-blue-600" to="/">
-                            Create an account</RouterLink></span>
+                                Create an account</RouterLink></span>
                     </div>
                 </div>
             </div>
