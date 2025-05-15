@@ -30,7 +30,9 @@ onMounted(() => {
           </Button>
         </div>
         <div class="card flex justify-center">
-          <Button label="Register" />
+          <Button>
+            <RouterLink to="/register" label="Register">Register</RouterLink>
+          </Button>
         </div>
       </article>
     </section>

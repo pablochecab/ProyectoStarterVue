@@ -1,81 +1,12 @@
 <script setup>
-import { ref } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { z } from 'zod';
-import { zodResolver } from '@primevue/forms/resolvers/zod';
-import FormBase from '@/components/forms/FormBase.vue'
+    import FormBase from '@/components/forms/FormBase.vue'
 
-// El @ siempre empieza desde la raiz 'src'
-import { useRouter } from 'vue-router';
-import { login } from '@/services/AuthService';
-
-const router = useRouter();
-const toast = useToast();
-const initialValues = ref({
-    usuario: '',
-    contrasenia: ''
-});
-
-
-
-const onFormSubmit = async (e) => {
-    console.log(e)
-   const { usuario, contrasenia } = e;
-
-       const result = await login(usuario, contrasenia);
-        if (result.ok) {
-            toast.add({ severity: 'success', summary: '¡Sesión iniciada!', detail: `Bienvenido, ${result.data.usuario}`, life: 3000 });
-            localStorage.setItem('token', result.data.token);
-            router.push('/');
-        } else {
-            toast.add({ severity: 'error', summary: 'Error', detail: result.data?.message || result.error, life: 3000 });
-        }
-}
-
-
-
-
-const resolver2 = zodResolver(
-    z.object({
-        usuario: z.string().min(2, { message: 'Este campo es obligatorio.' }),
-        contrasenia: z
-            .string()
-            .min(4, { message: 'Minimo 4 caractéres.' })
-        // .max(8, { message: 'Maximum 8 characters.' })
-        /* .refine((value) => /[a-z]/.test(value), {
-            message: 'Must have a lowercase letter.'
-        })
-        .refine((value) => /[A-Z]/.test(value), {
-            message: 'Must have an uppercase letter.'
-        })
-        .refine((value) => /d/.test(value), {
-            message: 'Must have a number.'
-        }) */
-    })
-);
-
-const onFormSubmit2 = async (e) => {
-
-    // e.originalEvent: Represents the native form submit event.
-    // e.valid: A boolean that indicates whether the form is valid or not.
-    // e.states: Contains the current state of each form field, including validity status.
-    // e.errors: An object that holds any validation errors for the invalid fields in the form.
-    // e.values: An object containing the current values of all form fields.
-    // e.reset: A function that resets the form to its initial state.  
-
-    if (e.valid) {
-        const { usuario, contrasenia } = e.values;
-        const result = await login(usuario, contrasenia);
-        if (result.ok) {
-            toast.add({ severity: 'success', summary: '¡Sesión iniciada!', detail: `Bienvenido, ${result.data.usuario}`, life: 3000 });
-            localStorage.setItem('token', result.data.token);
-            router.push('/');
-        } else {
-            toast.add({ severity: 'error', summary: 'Error', detail: result.data?.message || result.error, life: 3000 });
-        }
+    function emitirMensaje(x) {
+        console.log(x);
     }
-};
+
 </script>
+
 
 <template>
     <div
@@ -102,19 +33,18 @@ const onFormSubmit2 = async (e) => {
                                     fill="#000000" />
                             </g>
                         </svg>
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Bienvenido a 
-                            FlexOrder!</div>
-                        <span class="text-muted-color font-medium">Inicia sesión para continuar</span>
+                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Crear una cuenta</div>
+                        <span class="text-muted-color font-medium">Rellena los siguientes campos</span>
                     </div>
+                    
+                    <!-- Ejemplo emit -->
+                    <FormBase @submit-form="emitirMensaje" />
 
-                    <Toast />
-                    <FormBase style="width: 100%;" @submit-form="onFormSubmit">
-                        
-                    </FormBase>
                     <div class="text-center p-1">
-                        <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Todavia no tienes
-                            una cuenta? <RouterLink class="text-green-500 hover:text-blue-600" to="/register">
-                                Crear una cuenta</RouterLink></span>
+                        <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Ya tienes una cuenta?
+                            <RouterLink class="text-green-500 hover:text-blue-600" to="/login">
+                            Iniciar sesión</RouterLink>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -122,14 +52,7 @@ const onFormSubmit2 = async (e) => {
     </div>
 </template>
 
-<style scoped>
-.pi-eye {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
 
-.pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
+<style>
+
 </style>
